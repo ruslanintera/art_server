@@ -1,13 +1,10 @@
 const Router = require("express");
 const router = new Router();
 
-//================
 const userRouter = require("./userRouter");
 router.use("/auth", userRouter);
 const rackTypeRouter = require("./rackTypeRouter");
 router.use("/racktype", rackTypeRouter);
-
-//================
 
 const roleRouter = require("./roleRouter");
 router.use("/role", roleRouter);

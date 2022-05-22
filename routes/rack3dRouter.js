@@ -1,11 +1,12 @@
-const Router = require('express')
-const router = new Router()
-const Controller = require('../controllers/rack3dController')
+const Router = require("express");
+const router = new Router();
+const Controller = require("../controllers/rack3dController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.post('/create', Controller.create)
-router.get('/', Controller.getAll)
-router.get('/:id', Controller.getOne)
-router.post('/update/:id', Controller.update)
-router.get('/delete/:id', Controller.delete)
+router.post("/create", authMiddleware, Controller.create);
+router.get("/", Controller.getAll);
+router.get("/:id", Controller.getOne);
+router.post("/update/:id", authMiddleware, Controller.update);
+router.get("/delete/:id", authMiddleware, Controller.delete);
 
-module.exports = router
+module.exports = router;
