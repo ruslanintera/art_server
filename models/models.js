@@ -164,6 +164,23 @@ const racktype = sequelize.define(
   { freezeTableName: true }
 );
 
+const photovideo = sequelize.define(
+  "photovideo",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, defaultValue: "pv " },
+    manufacturer: { type: DataTypes.INTEGER, defaultValue: 0 },
+    pathimg: { type: DataTypes.STRING, defaultValue: "" },
+    color: { type: DataTypes.STRING, defaultValue: "#00F" },
+    params1: { type: DataTypes.STRING, defaultValue: "" },
+    params2: { type: DataTypes.STRING, defaultValue: "" },
+    params3: { type: DataTypes.STRING, defaultValue: "" },
+    type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
+    user: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  },
+  { freezeTableName: true }
+);
+
 const rack = sequelize.define(
   "rack",
   {
@@ -219,6 +236,7 @@ module.exports = {
   manufacturer,
   dc,
   racktype,
+  photovideo,
   rack,
   rack3d,
 };

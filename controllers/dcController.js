@@ -6,21 +6,23 @@ const ApiError = require("../error/ApiError");
 class Controller {
   async create(req, res, next) {
     try {
-      let { id, name, adress, model3d, color, params1, params2, params3 } =
+      let { name, adress, model3d, color, params1, params2, params3 } =
         req.body;
-      if (!name) {
-        name = "";
+      if (req.user) {
+        const newRecord = await dc.create({
+          name,
+          adress,
+          model3d,
+          color,
+          params1,
+          params2,
+          params3,
+          user: req.user.id,
+        });
+        return res.json(newRecord);
+      } else {
+        next(ApiError.forbidden("доступ запрещен"));
       }
-      const newRecord = await dc.create({
-        name,
-        adress,
-        model3d,
-        color,
-        params1,
-        params2,
-        params3,
-      });
-      return res.json(newRecord);
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
@@ -46,8 +48,8 @@ class Controller {
           );
           return res.json(updatedRecord);
         } else {
-          console.log("888888888888888888888888 oneRecord ELSE");
-          next(ApiError.UnauthorizedError("не авторизован 4455=6677"));
+          console.log("доступ запрещен 4455=6677 2");
+          next(ApiError.forbidden("доступ запрещен 4455=6677"));
         }
         console.log("**********56*********");
       } else {
@@ -126,11 +128,23 @@ class Controller {
   async delete(req, res) {
     try {
       let { id } = req.params;
-      dc.destroy({
-        where: { id: id, user: req.user.id },
-      }).then(() => {
-        res.send("success destroy");
-      });
+
+      if (id && req.user) {
+        const oneRecord = await dc.findOne({
+          where: { id: id, user: req.user.id },
+        });
+        if (oneRecord) {
+          dc.destroy({
+            where: { id: id, user: req.user.id },
+          }).then(() => {
+            res.send("success destroy");
+          });
+        } else {
+          next(ApiError.forbidden("доступ запрещен"));
+        }
+      } else {
+        next(ApiError.badRequest("недостаточно данных"));
+      }
     } catch (e) {
       console.error("ERROR DELETE", e.message, req.body);
       next(ApiError.badRequest(e.message));

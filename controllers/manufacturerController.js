@@ -6,14 +6,28 @@ const ApiError = require("../error/ApiError");
 class Controller {
   async create(req, res, next) {
     try {
-      let { id, name } = req.body;
-      if (!name) {
-        name = "";
+      // let { id, name } = req.body;
+      // if (id && req.user) {
+      //   if (!name) {
+      //     name = "";
+      //   }
+      //   const newRecord = await manufacturer.create({ name });
+      //   return res.json(newRecord);
+      // } else {
+      //   next(ApiError.badRequest("недостаточно данных"));
+      // }
+
+      let { name = "" } = req.body;
+      if (req.user) {
+        const newRecord = await manufacturer.create({
+          name,
+          user: req.user.id,
+        });
+        return res.json(newRecord);
+      } else {
+        next(ApiError.forbidden("доступ запрещен"));
       }
-      const newRecord = await manufacturer.create({ name });
-      return res.json(newRecord);
     } catch (e) {
-      //console.error("ERROR CREATE", e.message, req.body)
       next(ApiError.badRequest(e.message));
     }
   }
@@ -22,12 +36,19 @@ class Controller {
       let { id } = req.params;
       let { name } = req.body;
 
-      if (id && name) {
-        const updatedRecord = await manufacturer.update(
-          { name },
-          { where: { id: id, user: req.user.id } }
-        );
-        return res.json(updatedRecord);
+      if (id && name && req.user) {
+        const oneRecord = await dc.findOne({
+          where: { id: id, user: req.user.id },
+        });
+        if (oneRecord) {
+          const updatedRecord = await manufacturer.update(
+            { name },
+            { where: { id: id, user: req.user.id } }
+          );
+          return res.json(updatedRecord);
+        } else {
+          next(ApiError.forbidden("доступ запрещен"));
+        }
       } else {
         next(ApiError.badRequest("недостаточно данных"));
       }
@@ -79,13 +100,25 @@ class Controller {
   async delete(req, res) {
     try {
       let { id } = req.params;
-      manufacturer
-        .destroy({
+
+      if (id && req.user) {
+        const oneRecord = await dc.findOne({
           where: { id: id, user: req.user.id },
-        })
-        .then(() => {
-          res.send("success destroy");
         });
+        if (oneRecord) {
+          manufacturer
+            .destroy({
+              where: { id: id, user: req.user.id },
+            })
+            .then(() => {
+              res.send("success destroy");
+            });
+        } else {
+          next(ApiError.forbidden("доступ запрещен"));
+        }
+      } else {
+        next(ApiError.badRequest("недостаточно данных"));
+      }
     } catch (e) {
       //console.error("ERROR DELETE", e.message, req.body)
       next(ApiError.badRequest(e.message));

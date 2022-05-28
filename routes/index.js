@@ -5,6 +5,8 @@ const userRouter = require("./userRouter");
 router.use("/auth", userRouter);
 const rackTypeRouter = require("./rackTypeRouter");
 router.use("/racktype", rackTypeRouter);
+const photovideoRouter = require("./photovideoRouter");
+router.use("/photovideo", photovideoRouter);
 
 const roleRouter = require("./roleRouter");
 router.use("/role", roleRouter);

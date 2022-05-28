@@ -1,6 +1,6 @@
 const uuid = require("uuid");
 const path = require("path");
-const { racktype } = require("../models/models");
+const { photovideo } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const fs = require("fs");
 
@@ -38,28 +38,26 @@ class Controller {
   async create(req, res, next) {
     try {
       let {
-        name,
+        name = "",
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
       } = req.body;
-
+      console.log(" ====== req.user = ", req.user);
       if (req.user) {
-        const newRecord = await racktype.create({
+        const newRecord = await photovideo.create({
           name,
           manufacturer,
-          model3d,
+          pathimg,
           color,
           params1,
           params2,
           params3,
-          dts,
-          dt,
+          type,
           user: req.user.id,
         });
         return res.json(newRecord);
@@ -76,32 +74,30 @@ class Controller {
       let {
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
 
       if (id && req.user) {
-        const oneRecord = await racktype.findOne({
+        const oneRecord = await photovideo.findOne({
           where: { id: id, user: req.user.id },
         });
         if (oneRecord) {
-          const updatedRecord = await racktype.update(
+          const updatedRecord = await photovideo.update(
             {
               name,
               manufacturer,
-              model3d,
+              pathimg,
               color,
               params1,
               params2,
               params3,
-              dts,
-              dt,
+              type,
               user,
             },
             { where: { id: id, user: req.user.id } }
@@ -124,13 +120,12 @@ class Controller {
       let {
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
       if (req.files) {
@@ -189,17 +184,16 @@ class Controller {
       }
 
       if (id) {
-        const updatedRecord = await racktype.update(
+        const updatedRecord = await photovideo.update(
           {
             name,
             manufacturer,
-            model3d,
+            pathimg,
             color,
             params1,
             params2,
             params3,
-            dts,
-            dt,
+            type,
             user,
           },
           { where: { id: id, user: req.user.id } }
@@ -220,13 +214,12 @@ class Controller {
         count,
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
       //console.log("uploadjpg  req = ", req);
@@ -287,17 +280,16 @@ class Controller {
       }
 
       if (id) {
-        const updatedRecord = await racktype.update(
+        const updatedRecord = await photovideo.update(
           {
             name,
             manufacturer,
-            model3d,
+            pathimg,
             color,
             params1,
             params2,
             params3,
-            dts,
-            dt,
+            type,
             user,
           },
           { where: { id: id, user: req.user.id } }
@@ -319,13 +311,12 @@ class Controller {
         count,
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
       //console.log("uploadmp3  req.body = ", req.body)
@@ -402,17 +393,16 @@ class Controller {
       //return res.json(file_path)
 
       if (id) {
-        const updatedRecord = await racktype.update(
+        const updatedRecord = await photovideo.update(
           {
             name,
             manufacturer,
-            model3d,
+            pathimg,
             color,
             params1,
             params2,
             params3,
-            dts,
-            dt,
+            type,
             user,
           },
           { where: { id: id, user: req.user.id } }
@@ -433,13 +423,12 @@ class Controller {
         count,
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
       if (req.files) {
@@ -472,7 +461,7 @@ class Controller {
               console.error("!!!!!!!! ERROR DIR e=", e);
             }
           }
-          model3d = "user_" + user + "/racktype_" + id + "/" + fileName;
+          pathimg = "user_" + user + "/racktype_" + id + "/" + fileName;
         } else {
           let fileName = `glb${count}.glb`;
           try {
@@ -494,22 +483,21 @@ class Controller {
           } catch (e) {
             console.error("uploadglb  !!!!!!!! ONE FILE   ERROR DIR e=", e);
           }
-          model3d = "user_" + user + "/racktype_" + id + "/" + fileName;
+          pathimg = "user_" + user + "/racktype_" + id + "/" + fileName;
         }
       }
 
       if (id) {
-        const updatedRecord = await racktype.update(
+        const updatedRecord = await photovideo.update(
           {
             name,
             manufacturer,
-            model3d,
+            pathimg,
             color,
             params1,
             params2,
             params3,
-            dts,
-            dt,
+            type,
             user,
           },
           { where: { id: id, user: req.user.id } }
@@ -531,16 +519,16 @@ class Controller {
         count,
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
       } = req.body;
-      console.log("UGJ 1 req.body", req.body);
+      //console.log("UGJ 1 req.body", req.body);
+      console.log("UGJ 1 pathimg = ", pathimg);
 
       if (!id || !req.user) {
         next(ApiError.badRequest("недостаточно данных 5457"));
@@ -549,14 +537,14 @@ class Controller {
       console.log("UGJ 2 req.user", req.user);
 
       if (id && req.user) {
-        const oneRecord = await racktype.findOne({
+        const oneRecord = await photovideo.findOne({
           where: { id: id, user: req.user.id },
         });
         if (oneRecord) {
           //=================
           user = req.user.id;
           console.log("UGJ 3 user", user);
-          const filePath = "user" + user + "/model" + id;
+          const filePath = "user" + user + "/img" + id;
           const filePathStatic = "static/" + filePath;
           if (req.files) {
             const { imgs } = req.files;
@@ -568,49 +556,39 @@ class Controller {
                 const dirpath = path.resolve(__dirname, "..", filePathStatic);
                 fs.mkdirSync(dirpath, { recursive: true });
                 glb.mv(path.resolve(__dirname, "..", filePathStatic, fileName));
-                model3d = filePath + "/" + fileName;
+                pathimg = filePath + "/" + fileName;
               } catch (e) {
                 console.error("upload glb ERROR", e);
               }
             }
 
-            if (imgs) {
+            const images = req.files;
+            if (images) {
               let count = 1;
-              if (!params3) {
-                params3 = {};
-              } else {
-                params3 = JSON.parse(params3);
-              }
-              if (imgs.constructor === Array && imgs[0]) {
-                for (let imgOne of imgs) {
-                  let fileName = `img${count}.jpg`;
-                  try {
-                    const dirpath = path.resolve(
-                      __dirname,
-                      "..",
-                      filePathStatic
-                    );
-                    fs.mkdirSync(dirpath, { recursive: true });
-                    imgOne.mv(
-                      path.resolve(__dirname, "..", filePathStatic, fileName)
-                    );
-                    params3.imgs_qty = count;
-                    count++;
-                  } catch (e) {
-                    console.error("upload imgs ERROR", e);
-                  }
-                }
-              } else {
-                let fileName = `img${count}.jpg`;
+              params3 = [];
+
+              for (let key in images) {
+                const ext = path.extname(images[key].name);
+                console.log(
+                  "44 6 UGJ key = ",
+                  key,
+                  "images[key].name = ",
+                  images[key].name,
+                  "ext = ",
+                  ext
+                );
+                //let fileName = `img${count}.jpg`;
+                let fileName = `img_${count}` + ext;
                 try {
                   const dirpath = path.resolve(__dirname, "..", filePathStatic);
                   fs.mkdirSync(dirpath, { recursive: true });
-                  imgs.mv(
+                  images[key].mv(
                     path.resolve(__dirname, "..", filePathStatic, fileName)
                   );
-                  params3.imgs_qty = count;
+                  params3.push(fileName);
+                  count++;
                 } catch (e) {
-                  console.error("upload img ERROR", e);
+                  console.error("upload images ERROR", e);
                 }
               }
               params3 = JSON.stringify(params3);
@@ -618,26 +596,24 @@ class Controller {
           }
 
           console.log("UGJ 4 user", user);
-
-          const updatedRecord = await racktype.update(
-            {
-              name,
-              manufacturer,
-              model3d,
-              color,
-              params1,
-              params2,
-              params3,
-              dts,
-              dt,
-              user,
-            },
-            { where: { id: id, user: req.user.id } }
-          );
+          const record = {
+            name,
+            manufacturer,
+            pathimg,
+            color,
+            params1,
+            params2,
+            params3,
+            type,
+            user,
+          };
+          const updatedRecord = await photovideo.update(record, {
+            where: { id: id, user: req.user.id },
+          });
 
           console.log("UGJ 5 updatedRecord", updatedRecord);
 
-          return res.json(updatedRecord);
+          return res.json({ updatedRecord, record, id, user: req.user.id });
         } else {
           next(ApiError.forbidden("доступ запрещен 4455=6677"));
         }
@@ -650,19 +626,18 @@ class Controller {
     }
   }
 
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
       let {
         id,
         name,
         manufacturer,
-        model3d,
+        pathimg,
         color,
         params1,
         params2,
         params3,
-        dts,
-        dt,
+        type,
         user,
         limit,
         page,
@@ -683,8 +658,8 @@ class Controller {
       if (manufacturer) {
         where.manufacturer = manufacturer;
       }
-      if (model3d) {
-        where.model3d = model3d;
+      if (pathimg) {
+        where.pathimg = pathimg;
       }
       if (color) {
         where.color = color;
@@ -698,17 +673,14 @@ class Controller {
       if (params3) {
         where.params3 = params3;
       }
-      if (dts) {
-        where.dts = dts;
-      }
-      if (dt) {
-        where.dt = dt;
+      if (type) {
+        where.type = type;
       }
       if (user) {
         where.user = user;
       }
 
-      const getAllRecords = await racktype.findAndCountAll({
+      const getAllRecords = await photovideo.findAndCountAll({
         where,
         limit,
         offset,
@@ -720,10 +692,10 @@ class Controller {
       next(ApiError.badRequest(e.message));
     }
   }
-  async getOne(req, res) {
+  async getOne(req, res, next) {
     try {
       let { id } = req.params;
-      const oneRecord = await racktype.findOne({ where: { id: id } });
+      const oneRecord = await photovideo.findOne({ where: { id: id } });
       return res.json(oneRecord);
     } catch (e) {
       //console.error("ERROR getOne", e.message, req.body)
@@ -731,17 +703,16 @@ class Controller {
       next(ApiError.badRequest(e.message));
     }
   }
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       let { id } = req.params;
 
-      //!
       if (id && req.user) {
-        const oneRecord = await racktype.findOne({
+        const oneRecord = await photovideo.findOne({
           where: { id: id, user: req.user.id },
         });
         if (oneRecord) {
-          racktype
+          photovideo
             .destroy({
               where: { id: id, user: req.user.id },
             })
