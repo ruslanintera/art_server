@@ -13,7 +13,8 @@ router.post("/uploadjpg/:id", authMiddleware, Controller.uploadjpg);
 router.post("/uploadmp3/:id", authMiddleware, Controller.uploadmp3);
 
 router.post("/uploadglb/:id", authMiddleware, Controller.uploadglb);
-router.post("/uploadglbjpg/:id", authMiddleware, Controller.uploadglbjpg);
+router.post("/upload_jpg/:id", authMiddleware, Controller.upload_jpg);
+router.post("/upload_mp4/:id", authMiddleware, Controller.upload_mp4);
 
 router.get("/delete/:id", authMiddleware, Controller.delete);
 

@@ -512,7 +512,7 @@ class Controller {
     }
   }
 
-  async uploadglbjpg(req, res, next) {
+  async upload_jpg(req, res, next) {
     try {
       let { id } = req.params;
       let {
@@ -528,13 +528,14 @@ class Controller {
         user,
       } = req.body;
       //console.log("UGJ 1 req.body", req.body);
-      console.log("UGJ 1 pathimg = ", pathimg);
+      //console.log("UGJ 1 pathimg = ", pathimg);
+      console.log("upload_jpg 55 req.files = ", req.files);
 
       if (!id || !req.user) {
         next(ApiError.badRequest("недостаточно данных 5457"));
         return;
       }
-      console.log("UGJ 2 req.user", req.user);
+      //console.log("UGJ 2 req.user", req.user);
 
       if (id && req.user) {
         const oneRecord = await photovideo.findOne({
@@ -543,24 +544,24 @@ class Controller {
         if (oneRecord) {
           //=================
           user = req.user.id;
-          console.log("UGJ 3 user", user);
+          //console.log("UGJ 3 user", user);
           const filePath = "user" + user + "/img" + id;
           const filePathStatic = "static/" + filePath;
           if (req.files) {
-            const { imgs } = req.files;
-            const { glb } = req.files;
+            // const { imgs } = req.files;
+            // const { glb } = req.files;
 
-            if (glb) {
-              const fileName = `model.glb`;
-              try {
-                const dirpath = path.resolve(__dirname, "..", filePathStatic);
-                fs.mkdirSync(dirpath, { recursive: true });
-                glb.mv(path.resolve(__dirname, "..", filePathStatic, fileName));
-                pathimg = filePath + "/" + fileName;
-              } catch (e) {
-                console.error("upload glb ERROR", e);
-              }
-            }
+            // if (glb) {
+            //   const fileName = `model.glb`;
+            //   try {
+            //     const dirpath = path.resolve(__dirname, "..", filePathStatic);
+            //     fs.mkdirSync(dirpath, { recursive: true });
+            //     glb.mv(path.resolve(__dirname, "..", filePathStatic, fileName));
+            //     pathimg = filePath + "/" + fileName;
+            //   } catch (e) {
+            //     console.error("upload glb ERROR", e);
+            //   }
+            // }
 
             const images = req.files;
             if (images) {
@@ -569,14 +570,14 @@ class Controller {
 
               for (let key in images) {
                 const ext = path.extname(images[key].name);
-                console.log(
-                  "44 6 UGJ key = ",
-                  key,
-                  "images[key].name = ",
-                  images[key].name,
-                  "ext = ",
-                  ext
-                );
+                // console.log(
+                //   "44 6 UGJ key = ",
+                //   key,
+                //   "images[key].name = ",
+                //   images[key].name,
+                //   "ext = ",
+                //   ext
+                // );
                 //let fileName = `img${count}.jpg`;
                 let fileName = `img_${count}` + ext;
                 try {
@@ -595,7 +596,121 @@ class Controller {
             }
           }
 
-          console.log("UGJ 4 user", user);
+          //console.log("UGJ 4 user", user);
+          const record = {
+            name,
+            manufacturer,
+            pathimg,
+            color,
+            params1,
+            params2,
+            params3,
+            type,
+            user,
+          };
+          const updatedRecord = await photovideo.update(record, {
+            where: { id: id, user: req.user.id },
+          });
+
+          console.log("UGJ 5 updatedRecord", updatedRecord);
+
+          return res.json({ updatedRecord, record, id, user: req.user.id });
+        } else {
+          next(ApiError.forbidden("доступ запрещен 4455=6677"));
+        }
+      } else {
+        next(ApiError.badRequest("недостаточно данных"));
+      }
+    } catch (e) {
+      //console.error("ERROR UPDATE", e.message, req.body)
+      next(ApiError.badRequest(e.message));
+    }
+  }
+  async upload_mp4(req, res, next) {
+    try {
+      let { id } = req.params;
+      let {
+        count,
+        name,
+        manufacturer,
+        pathimg,
+        color,
+        params1,
+        params2,
+        params3,
+        type,
+        user,
+      } = req.body;
+      //console.log("UGJ 1 req.body", req.body);
+      //console.log("UGJ 1 pathimg = ", pathimg);
+      console.log("upload_mp4 ==== req.files = ", req.files);
+
+      if (!id || !req.user) {
+        next(ApiError.badRequest("недостаточно данных 5457"));
+        return;
+      }
+      //console.log("UGJ 2 req.user", req.user);
+
+      if (id && req.user) {
+        const oneRecord = await photovideo.findOne({
+          where: { id: id, user: req.user.id },
+        });
+        if (oneRecord) {
+          //=================
+          user = req.user.id;
+          //console.log("UGJ 3 user", user);
+          const filePath = "user" + user + "/video" + id;
+          const filePathStatic = "static/" + filePath;
+          if (req.files) {
+            // const { imgs } = req.files;
+            // const { glb } = req.files;
+
+            // if (glb) {
+            //   const fileName = `model.glb`;
+            //   try {
+            //     const dirpath = path.resolve(__dirname, "..", filePathStatic);
+            //     fs.mkdirSync(dirpath, { recursive: true });
+            //     glb.mv(path.resolve(__dirname, "..", filePathStatic, fileName));
+            //     pathimg = filePath + "/" + fileName;
+            //   } catch (e) {
+            //     console.error("upload glb ERROR", e);
+            //   }
+            // }
+
+            const images = req.files;
+            if (images) {
+              let count = 1;
+              params2 = [];
+
+              for (let key in images) {
+                const ext = path.extname(images[key].name);
+                // console.log(
+                //   "44 6 UGJ key = ",
+                //   key,
+                //   "images[key].name = ",
+                //   images[key].name,
+                //   "ext = ",
+                //   ext
+                // );
+                //let fileName = `img${count}.jpg`;
+                let fileName = `video_${count}` + ext;
+                try {
+                  const dirpath = path.resolve(__dirname, "..", filePathStatic);
+                  fs.mkdirSync(dirpath, { recursive: true });
+                  images[key].mv(
+                    path.resolve(__dirname, "..", filePathStatic, fileName)
+                  );
+                  params2.push(fileName);
+                  count++;
+                } catch (e) {
+                  console.error("upload images ERROR", e);
+                }
+              }
+              params2 = JSON.stringify(params2);
+            }
+          }
+
+          //console.log("UGJ 4 user", user);
           const record = {
             name,
             manufacturer,
