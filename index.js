@@ -16,33 +16,22 @@ const fs = require("fs");
 
 var bodyParser = require('body-parser')
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 
 const app = express()
 
 /*********************************************** */
-const local = true; //true; //false
+const local = true;
 let http, ip
 if(local) {
     http = require('http').createServer(app);
     ip = 'localhost';
-
 } else {
-    //http = require('https').createServer(app);
-    //Node, Express, SSL Certificate: Run HTTPS Server from scratch in 5 steps
-    //               /var/www/www-root/data/www/tflex3d.ru/tflex_po/_test_server3
-    //Закрытый ключ: /var/www/httpd-cert/www-root/tflex3d.ru_le1.key
-    //Открытый ключ: /var/www/httpd-cert/www-root/tflex3d.ru_le1.crt
-    
-
     http = require('https').createServer({
         key: fs.readFileSync('../../../../../../httpd-cert/www-root/tflex3d.ru_le1.key'), //privkey
         cert: fs.readFileSync('../../../../../../httpd-cert/www-root/tflex3d.ru_le1.crt'), // sert
       }, app);
-
-    //ip = '91.228.154.21';
     ip = '5.187.1.90';
-
 }
 //const io = require('socket.io')(http, { cors: { origin: '*' } });
 

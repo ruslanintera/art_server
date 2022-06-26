@@ -1,6 +1,6 @@
 const Router = require("express");
 const router = new Router();
-const Controller = require("../controllers/rack3dController");
+const Controller = require("../controllers/audioController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 router.post("/create", authMiddleware, Controller.create);

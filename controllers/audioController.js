@@ -1,6 +1,6 @@
 const uuid = require("uuid");
 const path = require("path");
-const { rack3d } = require("../models/models");
+const { audio } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class Controller {
@@ -8,7 +8,7 @@ class Controller {
     try {
       let { name = "" } = req.body;
       if (req.user) {
-        const newRecord = await rack3d.create({ name, user: req.user.id });
+        const newRecord = await audio.create({ name, user: req.user.id });
         return res.json(newRecord);
       } else {
         next(ApiError.badRequest("недостаточно данных"));
@@ -24,7 +24,7 @@ class Controller {
       let { name } = req.body;
 
       if (id && name) {
-        const updatedRecord = await rack3d.update(
+        const updatedRecord = await audio.update(
           { name },
           { where: { id: id } }
         );
@@ -67,7 +67,7 @@ class Controller {
         where.name = name;
       }
 
-      const getAllRecords = await rack3d.findAndCountAll({
+      const getAllRecords = await audio.findAndCountAll({
         where,
         limit,
         offset,
@@ -82,7 +82,7 @@ class Controller {
   async getOne(req, res) {
     try {
       let { id } = req.params;
-      const oneRecord = await rack3d.findOne({ where: { id: id } });
+      const oneRecord = await audio.findOne({ where: { id: id } });
       return res.json(oneRecord);
     } catch (e) {
       //console.error("ERROR getOne", e.message, req.body)
@@ -93,7 +93,7 @@ class Controller {
   async delete(req, res) {
     try {
       let { id } = req.params;
-      rack3d
+      audio
         .destroy({
           where: { id: id },
         })

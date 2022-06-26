@@ -527,26 +527,14 @@ class Controller {
   async uploadglbjpg(req, res, next) {
     try {
       let { id } = req.params;
-      let {
-        count,
-        name,
-        manufacturer,
-        model3d,
-        color,
-        params1,
-        params2,
-        params3,
-        dts,
-        dt,
-        user,
-      } = req.body;
-      console.log("UGJ 1 req.body", req.body);
+      let { count, name, manufacturer, model3d, color, params1, params2, params3, dts, dt, user } = req.body;
+      //console.log("UGJ 1 req.body", req.body);
 
       if (!id || !req.user) {
         next(ApiError.badRequest("недостаточно данных 5457"));
         return;
       }
-      console.log("UGJ 2 req.user", req.user);
+      //console.log("UGJ 2 req.user", req.user);
 
       if (id && req.user) {
         const oneRecord = await racktype.findOne({
@@ -555,12 +543,13 @@ class Controller {
         if (oneRecord) {
           //=================
           user = req.user.id;
-          console.log("UGJ 3 user", user);
+          //console.log("UGJ 3 user", user);
           const filePath = "user" + user + "/model" + id;
           const filePathStatic = "static/" + filePath;
           if (req.files) {
             const { imgs } = req.files;
             const { glb } = req.files;
+            console.log("===! req.files", req.files);
 
             if (glb) {
               const fileName = `model.glb`;
@@ -573,7 +562,21 @@ class Controller {
                 console.error("upload glb ERROR", e);
               }
             }
+            if (imgs) {
+              const ext = path.extname(imgs.name);
+              console.log("3333333333333344 imgs.name = ", imgs.name, "ext = ", ext);
+              const fileName = 'img' + ext;
+              try {
+                const dirpath = path.resolve(__dirname, "..", filePathStatic);
+                fs.mkdirSync(dirpath, { recursive: true });
+                imgs.mv(path.resolve(__dirname, "..", filePathStatic, fileName));
+                params3 = filePath + "/" + fileName;
+              } catch (e) {
+                console.error("upload imgs ERROR", e);
+              }
+            }
 
+            /** * /
             if (imgs) {
               let count = 1;
               if (!params3) {
@@ -615,29 +618,22 @@ class Controller {
               }
               params3 = JSON.stringify(params3);
             }
+
+            /** */
+
           }
 
-          console.log("UGJ 4 user", user);
-
+          //console.log("UGJ 4 user", user);
+          const record = { id, name, manufacturer, model3d, color, params1, params2, params3, dts, dt, user, }
           const updatedRecord = await racktype.update(
-            {
-              name,
-              manufacturer,
-              model3d,
-              color,
-              params1,
-              params2,
-              params3,
-              dts,
-              dt,
-              user,
-            },
-            { where: { id: id, user: req.user.id } }
+            record, { where: { id: id, user: req.user.id } }
           );
 
-          console.log("UGJ 5 updatedRecord", updatedRecord);
+          //console.log("UGJ 5 updatedRecord", updatedRecord);
 
-          return res.json(updatedRecord);
+          //return res.json(updatedRecord);
+          return res.json({ updatedRecord, record, id, user: req.user.id });
+
         } else {
           next(ApiError.forbidden("доступ запрещен 4455=6677"));
         }

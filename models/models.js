@@ -164,8 +164,7 @@ const racktype = sequelize.define(
   { freezeTableName: true }
 );
 
-const photovideo = sequelize.define(
-  "photovideo",
+const photovideo = sequelize.define("photovideo",
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, defaultValue: "pv " },
@@ -180,54 +179,53 @@ const photovideo = sequelize.define(
   },
   { freezeTableName: true }
 );
-
-const rack = sequelize.define(
-  "rack",
+const video = sequelize.define("video",
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: {
-      type: DataTypes.STRING,
-      unique: false,
-      allowNull: false,
-      defaultValue: "",
-    },
-    rack_type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    dc: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }, //distribution_center
-    row: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    column: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    barcode: {
-      type: DataTypes.STRING,
-      unique: false,
-      allowNull: false,
-      defaultValue: "",
-    },
+    name: { type: DataTypes.STRING, defaultValue: "video " },
+    manufacturer: { type: DataTypes.INTEGER, defaultValue: 0 },
+    pathimg: { type: DataTypes.STRING, defaultValue: "" },
+    color: { type: DataTypes.STRING, defaultValue: "#00F" },
+    params1: { type: DataTypes.STRING, defaultValue: "" },
+    params2: { type: DataTypes.STRING, defaultValue: "" },
+    params3: { type: DataTypes.STRING, defaultValue: "" },
+    type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
+    user: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  },
+  { freezeTableName: true }
+);
+const photo = sequelize.define("photo",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, defaultValue: "photo " },
+    manufacturer: { type: DataTypes.INTEGER, defaultValue: 0 },
+    pathimg: { type: DataTypes.STRING, defaultValue: "" },
+    color: { type: DataTypes.STRING, defaultValue: "#00F" },
+    params1: { type: DataTypes.STRING, defaultValue: "" },
+    params2: { type: DataTypes.STRING, defaultValue: "" },
+    params3: { type: DataTypes.STRING, defaultValue: "" },
+    type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
+    user: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  },
+  { freezeTableName: true }
+);
+const audio = sequelize.define("audio",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, defaultValue: "audio " },
+    manufacturer: { type: DataTypes.INTEGER, defaultValue: 0 },
+    pathimg: { type: DataTypes.STRING, defaultValue: "" },
+    color: { type: DataTypes.STRING, defaultValue: "#00F" },
+    params1: { type: DataTypes.STRING, defaultValue: "" },
+    params2: { type: DataTypes.STRING, defaultValue: "" },
+    params3: { type: DataTypes.STRING, defaultValue: "" },
+    type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
     user: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
   },
   { freezeTableName: true }
 );
 
-const rack3d = sequelize.define(
-  "rack3d",
-  {
-    // соответствие между detail_type (PLU) и элементами 3Д модели стеллажа
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: {
-      type: DataTypes.STRING,
-      unique: false,
-      allowNull: false,
-      defaultValue: "",
-    },
-    detail3d: {
-      type: DataTypes.STRING,
-      unique: false,
-      allowNull: false,
-      defaultValue: "",
-    }, // название элемента 3Д модели стеллажа
-    detail_type: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    user: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-  },
-  { freezeTableName: true }
-);
+
 
 module.exports = {
   User,
@@ -237,6 +235,7 @@ module.exports = {
   dc,
   racktype,
   photovideo,
-  rack,
-  rack3d,
+  video,
+  photo,
+  audio,
 };
