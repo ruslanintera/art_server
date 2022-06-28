@@ -1,6 +1,7 @@
 const userService = require("../auth/service/user-service");
 const { validationResult } = require("express-validator");
 const ApiError = require("../auth/exceptions/api-error");
+const Moralis = require("moralis/node");
 
 class UserController {
   async registration(req, res, next) {
@@ -71,6 +72,16 @@ class UserController {
         httpOnly: true,
       });
       return res.json(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async moralis_login(req, res, next) {
+    try {
+      const { moralis_session } = req.body;
+      const user_data = await Moralis.Cloud.run("getUserBySession", {sessionToken: moralis_session});
+      return res.json(user_data);
     } catch (e) {
       next(e);
     }
