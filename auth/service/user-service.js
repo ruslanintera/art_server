@@ -7,27 +7,24 @@ const UserDto = require("../dtos/user-dto");
 const ApiError = require("../exceptions/api-error");
 
 class UserService {
-  async registration(email, password) {
-    const candidate = await User.findOne({ where: { email } });
+  async registration(moralisData) {
+    const { ethAddress, username } = moralisData;
+
+    const candidate = await User.findOne({ where: { ethAddress: ethAddress } });
+
     if (candidate) {
       throw ApiError.BadRequest(
-        `Пользователь с почтовым адресом ${email} уже существует`
+        `User with ethAddress ${ethAddress} already exists`
       );
     }
-    const hashPassword = await bcrypt.hash(password, 3);
-    const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
+    // const hashPassword = await bcrypt.hash(password, 3);
+    // const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
 
     const user = await User.create({
-      email,
-      password: hashPassword,
-      activationLink,
+      ethAddress, username
     });
-    // await mailService.sendActivationMail(
-    //   email,
-    //   `${process.env.API_URL}/api/auth/activate/${activationLink}`
-    // );
 
-    const userDto = new UserDto(user); // id, email, isActivated
+    const userDto = new UserDto(user); // id, ethAddress, isActivated
     const tokens = tokenService.generateTokens({ ...userDto });
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
@@ -44,14 +41,11 @@ class UserService {
     await user.save();
   }
 
-  async login(email, password) {
-    const user = await User.findOne({ where: { email } });
+  async login(moralisData) {
+    const { ethAddress, username } = moralisData;
+    const user = await User.findOne({ where: { ethAddress } });
     if (!user) {
-      throw ApiError.BadRequest("Пользователь с таким email не найден");
-    }
-    const isPassEquals = await bcrypt.compare(password, user.password);
-    if (!isPassEquals) {
-      throw ApiError.BadRequest("Неверный пароль");
+      throw ApiError.BadRequest("User not found");
     }
     const userDto = new UserDto(user.dataValues);
     //console.log("!!!!!!!!!!!!!!                      userDto = ", userDto);

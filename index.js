@@ -13,6 +13,7 @@ const path = require('path')
 const mysql = require('mysql2'); // or use import if you use TS
 const util = require('util');
 const fs = require("fs");
+const Moralis = require("moralis/node");
 
 var bodyParser = require('body-parser')
 
@@ -50,6 +51,10 @@ app.use(errorHandler)
 
 const start = async () => {
     try {
+        await Moralis.start({
+            serverUrl: process.env.MORALIS_SERVER_URL, 
+            appId: process.env.MORALIS_APP_ID
+        });
         await sequelize.authenticate()
         await sequelize.sync()
         http.listen(PORT, ip, () =>console.log(`Server started on port ${PORT}`))

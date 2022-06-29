@@ -1,13 +1,13 @@
 module.exports = class UserDto {
-    email;
+    ethAddress;
     id;
-    isActivated;
+    username;
 
     constructor(model) {
         //c onsole.log("DTO ==== model = ", model)
-        this.email = model.email;
+        this.ethAddress = model.ethAddress;
         //this.id = model._id;
         this.id = model.id;
-        this.isActivated = model.isActivated;
+        this.username = model.username;
     }
 }
