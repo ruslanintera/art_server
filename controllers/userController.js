@@ -9,31 +9,24 @@ class UserController {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return next(
-          ApiError.BadRequest("Ошибка при валидации", errors.array())
+          ApiError.BadRequest("Validation error", errors.array())
         );
       }
-      const { email, password } = req.body;
-      const userData = await userService.registration(email, password);
+      const { moralis_session } = req.body;
+      const moralisData = await Moralis.Cloud.run("getUserBySession", {sessionToken: moralis_session});
+      // console.log(moralisData)
+      if (!moralisData) {
+        return next(
+          ApiError.BadRequest("Moralis session not found", errors.array())
+        );
+      }
+
+      const userData = await userService.registration(moralisData);
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      return res.json(userData);
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  async login(req, res, next) {
-    try {
-      const { email, password } = req.body;
-      //console.log("LOGIN email, password = ", email, password);
-      const userData = await userService.login(email, password);
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
+      
       return res.json(userData);
     } catch (e) {
       next(e);
@@ -77,11 +70,19 @@ class UserController {
     }
   }
 
-  async moralis_login(req, res, next) {
+  async login(req, res, next) {
     try {
       const { moralis_session } = req.body;
-      const user_data = await Moralis.Cloud.run("getUserBySession", {sessionToken: moralis_session});
-      return res.json(user_data);
+      const moralisData = await Moralis.Cloud.run("getUserBySession", {sessionToken: moralis_session});
+      if (!moralisData) {
+        throw ApiError.BadRequest("No user found");
+      }
+      const userData = await userService.login(moralisData);
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.json(userData);
     } catch (e) {
       next(e);
     }
